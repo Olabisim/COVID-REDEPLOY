@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#3aaf45" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.4/semantic.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">	
+        
+        <link rel="stylesheet" href="../fpart/css/alltest.css">		<title>COVID-19 environment test</title>
+        <style>
+
+        </style>
+</head>
+<body>
+    
+
+    <div class="topnav">
+        <h2>COVID-19 Impact in Nigeria</h2>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content" id="modal-content">
+
+            <form action="/contactfa" method="POST">
+
+                <input name="bodyy" type="text" id="mytext" class="dnr">
+                <input type="submit" value="close" class="closee">
+
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div id="container">
+        <div id="start">
+            <div>The following questions will ask you about the impact of COVID-19 pandemic on your day-to-day activities and
+                     personal finances. 
+            </div>
+            <button>continue</button>
+        </div>
+        <div id="quiz" style="display: none">
+            <div id="question"></div>   
+
+            <hr/>
+            <div id="choices">
+                <div class="choice" id="best" onclick="checkAnswer('best')"></div>
+                <div class="choice" id="good" onclick="checkAnswer('good')"></div>
+                <div class="choice" id="medium" onclick="checkAnswer('medium')"></div>
+                <div class="choice" id="bad" onclick="checkAnswer('bad')"></div>
+                <div class="choice" id="worst" onclick="checkAnswer('worst')"></div>
+            </div>
+            <hr/>
+            <div id="progress"></div>
+        </div>
+        <div id="scoreContainer" style="display: none"></div>
+        <button id="myBtn" style="opacity: 0;">Submit</button>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+        const start = document.getElementById("start");
+        const quiz = document.getElementById("quiz");
+        const question = document.getElementById("question");
+        const choiceA = document.getElementById("best");
+        const choiceB = document.getElementById("good");
+        const choiceC = document.getElementById("medium");
+        const choiceD = document.getElementById("bad");
+        const choiceE = document.getElementById("worst");
+        const counter = document.getElementById("counter");
+        const timeGauge = document.getElementById("timeGauge");
+        const progress = document.getElementById("progress");
+        const scoreDiv = document.getElementById("myModal");
+        const modalC = document.getElementById("modal-content");
+
+// create our questions
+let questions = [
+    {
+        question : "Has your income been at all affected by the COVID-19 pandemic?",
+        choiceA : "Yes, an increase in my income",
+        choiceB : "No increase or decrease income",
+        choiceC : "Yes, I have a reduction in my income",
+        choiceD : "No, I'm a student",
+        choiceE : "Yes, I lost my job",
+        correct : "best"
+    },{
+        question : "How concerned are you that your economic situation will be negatively Impacted in the next 30 days as a result of a change in economic activity?",
+        choiceA : "Very concerned",
+        choiceB : "Concerned",
+        choiceC : "Neither concerned nor unconcerned",
+        choiceD : "Unconcerned",
+        choiceE : "Very unconcerned",
+        correct : "good"
+    },{
+        question : "When you leave your home, do you typically wear a face mask and go around with hand sanitizers?",
+        choiceA : "Yes, always",
+        choiceB : "Yes, sometimes",
+        choiceC : "I'm not sure",
+        choiceD : "No, I don't like face masks and sanitizers",
+        choiceE : "No, never",
+        correct : "medium"
+    },{
+        question : "Do school-aged children living in your household schools being closed due to COVID-19?",
+        choiceA : "Yes, their school has closed",
+        choiceB : "They are homeschooled",
+        choiceC : "They don't attend school",
+        choiceD : "Their school had closed but is re-open or re-opening soon",
+        choiceE : "No, their school has not closed ",
+        correct : "bad"
+    },{
+        question : "How much of an impact do you believe the COVID-19 pandemic and subsequent quarantine measures have had on your mental and emotional health?",
+        choiceA : "Extreme positive impact",
+        choiceB : "Some postive impact",
+        choiceC : "Neither postive nor negative impact",
+        choiceD : "Some negative impact",
+        choiceE : "Extreme negative impact",
+        correct : "worst"
+    }
+];
+
+// create some variables
+const lastQuestion = questions.length - 1;
+let runningQuestion = 0;
+let count = 0;
+const questionTime = 10; // 10s
+const gaugeWidth = 150; // 150px
+const gaugeUnit = gaugeWidth / questionTime;
+let TIMER;
+let score = 0;
+
+// render a question
+function renderQuestion(){
+        let q = questions[runningQuestion];
+        
+        question.innerHTML = "<p>"+ q.question +"</p>";
+        choiceA.innerHTML = q.choiceA;
+        choiceB.innerHTML = q.choiceB;
+        choiceC.innerHTML = q.choiceC;
+        choiceD.innerHTML = q.choiceD;
+        choiceE.innerHTML = q.choiceE;
+}
+
+start.addEventListener("click",startQuiz);
+
+// start quiz
+function startQuiz(){
+        start.style.display = "none";
+        renderQuestion();
+        quiz.style.display = "block";
+        renderProgress();
+        renderCounter();
+        TIMER = setInterval(renderCounter,1000); // 1000ms = 1s
+}
+
+// render progress
+function renderProgress(){
+        for(let qIndex = 0; qIndex <= lastQuestion; qIndex++){
+                progress.innerHTML += "<div class='prog' id="+ qIndex +"></div>";
+        }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Get the modal
+        var modal = document.getElementById('myModal');
+        
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+        
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+        
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        
+        
+
+
+        //if answer equals best score + 10
+        function checkAnswer(answer){
+            if( answer == 'best'){
+                // answer is correct
+                // change progress color to green
+                answerIsCorrect();
+                score+= 0.15;
+            }
+            else if( answer == 'good'){
+                // answer is correct
+                // change progress color to green
+                score += 0.3;
+                answerIsCorrect();
+            }
+            else if( answer == 'medium'){
+                // answer is correct
+                score+= 0.5;
+                // change progress color to green
+                answerIsCorrect();
+            }
+            else if( answer == 'bad'){
+                score+= 0.75;
+                // answer is correct
+                // change progress color to green
+                answerIsCorrect();
+            }
+            else{
+                score+= 0.9;
+                // answer is wrong
+                // change progress color to red
+                answerIsWrong();
+            }
+            count = 0;
+            if(runningQuestion < lastQuestion){
+                runningQuestion++;
+                renderQuestion();
+            }
+            else if (runningQuestion == lastQuestion){
+                btn.style.display = 'block';
+                scoreRender();
+            }
+            else{
+                // end the quiz and show the score
+                clearInterval(TIMER);
+            }
+        }
+
+        // answer is correct
+        function answerIsCorrect(){
+            document.getElementById(runningQuestion).style.backgroundColor = "black";
+        }
+
+        // answer is Wrong
+        function answerIsWrong(){
+            document.getElementById(runningQuestion).style.backgroundColor = "black";
+        }
+
+        // score render
+        function scoreRender(){
+            scoreDiv.style.display = "block";
+            
+            // calculate the amount of question percent answered by the user
+            const scorePerCent = Math.round(100 * score/questions.length);
+            
+            // choose the image based on the scorePerCent
+            let img = (scorePerCent >= 80) ? "img/5.png" :
+                    (scorePerCent >= 60) ? "img/4.png" :
+                    (scorePerCent >= 40) ? "img/3.png" :
+                    (scorePerCent >= 20) ? "img/2.png" :
+                    "img/1.png";
+            
+            //scoreDiv.innerHTML = "<img src="+ img +">";
+
+            if(scorePerCent < 30){
+                    modalC.innerHTML += "<h4>"+ scorePerCent + "% <p>Environment impact</p></h4><hr/><p>Very low chance of contracting COVID-19 through day-to-day activities and personal finances.</p>✔ <p>Your record will be sent to Nigeria Centre for Disease Control (NCDC).</p>";
+                    var test = "<p>" + scorePerCent + "%</p><span style='color: purple;'> Environment impact.</span> <p style='color: black;'>Very low chance of contracting COVID-19 through day-to-day activities and personal finances.</p>";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+            }
+            else if (scorePerCent < 50){
+                    modalC.innerHTML += "<h4>"+ scorePerCent + "% <p>Environment impact</p></h4><hr/><p>Low chance of contracting COVID-19 through day-to-day activities and personal finances.<p>✔ </p> Your record will be sent to Nigeria Centre for Disease Control (NCDC).</p>";
+                    var test = "<p>" + scorePerCent + "%</p><span style='color: purple;'><span style='color: purple;'> Environment impact.</span> </span> <p style='color: black;'>Low chance of contracting COVID-19 through day-to-day activities and personal finances.</p>";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+                    
+            }
+            else if (scorePerCent < 70){
+                    modalC.innerHTML += "<h4>"+ scorePerCent + "% <p>Environment impact</p></h4><hr/><p>High chance of contracting COVID-19 through day-to-day activities and personal finances.</p>✔ <p> Your record will be sent to Nigeria Centre for Disease Control (NCDC).</p>";
+                    var test = "<p>" + scorePerCent + "%</p><span style='color: purple;'> Environment impact.</span>  <p style='color: black;'>High chance of contracting COVID-19 through day-to-day activities and personal finances.</p>";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+            }
+            else { 
+                    modalC.innerHTML += "<h4>"+ scorePerCent + "% <p>Environment impact</p></h4><hr/><p>Very high chance of contracting COVID-19 through day-to-day activities and personal finances.</p>✔ <p> Your record will be ssent to Nigeria Centre for Disease Control (NCDC).</p>";
+                    var test = "<p>" + scorePerCent + "%</p><span style='color: purple;'> Environment impact.</span><p style='color: black;'>Very high chance of contracting COVID-19 through day-to-day activities and personal finances.</p>";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+            }
+        }
+</script>
+
+
+
+
+
+
+</body>
+</html>

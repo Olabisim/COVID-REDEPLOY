@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#3aaf45" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.4/semantic.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">	
+        <link rel="stylesheet" href="../fpart/css/alltest.css">		
+        <title>COVID-19 spread test</title>
+        <style>
+        </style>
+</head>
+<body>
+    
+
+    <div class="topnav">
+        <h2>COVID-19 Impact in Nigeria</h2>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content" id="modal-content">
+
+            <form>
+                <input type="checkbox" id="myCheck" onmouseover="myFunction()" onclick="alert('click event occured')">
+                <input type="text" id="mytext">
+            </form>
+        <a href="/">close</a>
+        </div>
+    </div>
+
+
+
+
+    <div id="container">
+
+        <div id="start">
+            <div>The following questions will ask you about the spread of covid-19
+                 in your area.
+            </div>
+            <button>continue</button>
+        </div>
+
+        <div id="quiz" style="display: none">
+            <div id="question"></div>   
+
+            <hr/>
+            <div id="choices">
+                <div class="choice" id="best" onclick="checkAnswer('best')"></div>
+                <div class="choice" id="good" onclick="checkAnswer('good')"></div>
+                <div class="choice" id="medium" onclick="checkAnswer('medium')"></div>
+                <div class="choice" id="bad" onclick="checkAnswer('bad')"></div>
+                <div class="choice" id="worst" onclick="checkAnswer('worst')"></div>
+            </div>
+            <hr/>
+            <div id="progress"></div>
+        </div>
+        <div id="scoreContainer" style="display: none"></div>
+        <button id="myBtn" style="opacity: 0;">Submit</button>
+    </div>
+    
+
+
+    <form>
+        <input type="checkbox" id="myCheck" onmouseover="myFunction()" onclick="alert('click event occured')">
+      </form>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+        const start = document.getElementById("start");
+        const quiz = document.getElementById("quiz");
+        const question = document.getElementById("question");
+        const choiceA = document.getElementById("best");
+        const choiceB = document.getElementById("good");
+        const choiceC = document.getElementById("medium");
+        const choiceD = document.getElementById("bad");
+        const choiceE = document.getElementById("worst");
+        const counter = document.getElementById("counter");
+        const timeGauge = document.getElementById("timeGauge");
+        const progress = document.getElementById("progress");
+        const scoreDiv = document.getElementById("myModal");
+        const modalC = document.getElementById("modal-content");
+
+// create our questions
+let questions = [
+    {
+        question : "How concerned are you about the spread of COVID-19 in your community?",
+        choiceA : "Very concerned",
+        choiceB : "Concerned",
+        choiceC : "Neither concerned nor unconcerned",
+        choiceD : "Unconcerned",
+        choiceE : "Very unconcerned",
+        correct : "best"
+    },{
+        question : "Have you personally contracted COVI-D-19?",
+        choiceA : "No(have shown no symptoms)",
+        choiceB : "No(tested Negative)",
+        choiceC : "I may have contracted COVID-19, but have not been tested",
+        choiceD : "I am awaiting test results for COVID-19",
+        choiceE : "Yes, i was tested and confirmed positive",
+        correct : "good"
+    },{
+        question : "How concerned are you that you personally will contract COVID-19?",
+        choiceA : "Very concerned",
+        choiceB : "Concerned",
+        choiceC : "Neither concerned nor unconcerned",
+        choiceD : "Unconcerned",
+        choiceE : "Very unconcerned",
+        correct : "medium"
+    },{
+        question : "How concerned are you about your access to adequate health care services on COVID-19?",
+        choiceA : "Very concerned",
+        choiceB : "Concerned",
+        choiceC : "Neither concerned nor unconcerned",
+        choiceD : "Unconcerned",
+        choiceE : "Very unconcerned",
+        correct : "bad"
+    },{
+        question : "Do you know if testing for Coronavirus is available in your area?",
+        choiceA : "Yes, confirmed",
+        choiceB : "Yes, not confirmed",
+        choiceC : "Not sure",
+        choiceD : "No, not confirmed",
+        choiceE : "No, confirmed",
+        correct : "worst"
+    }
+];
+
+// create some variables
+const lastQuestion = questions.length - 1;
+let runningQuestion = 0;
+let count = 0;
+const questionTime = 10; // 10s
+const gaugeWidth = 150; // 150px
+const gaugeUnit = gaugeWidth / questionTime;
+let TIMER;
+let score = 0;
+
+// render a question
+function renderQuestion(){
+        let q = questions[runningQuestion];
+        
+        question.innerHTML = "<p>"+ q.question +"</p>";
+        choiceA.innerHTML = q.choiceA;
+        choiceB.innerHTML = q.choiceB;
+        choiceC.innerHTML = q.choiceC;
+        choiceD.innerHTML = q.choiceD;
+        choiceE.innerHTML = q.choiceE;
+}
+
+start.addEventListener("click",startQuiz);
+
+// start quiz
+function startQuiz(){
+        start.style.display = "none";
+        renderQuestion();
+        quiz.style.display = "block";
+        renderProgress();
+        renderCounter();
+        TIMER = setInterval(renderCounter,1000); // 1000ms = 1s
+}
+
+// render progress
+function renderProgress(){
+        for(let qIndex = 0; qIndex <= lastQuestion; qIndex++){
+                progress.innerHTML += "<div class='prog' id="+ qIndex +"></div>";
+        }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Get the modal
+        var modal = document.getElementById('myModal');
+        
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+        
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+        
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        
+        
+
+
+
+        function myFunction() {
+                    document.getElementById("myCheck").click();
+            }
+        //if answer equals best score + 10
+        //maybe i can just after the first one it will dissappear
+        //or a while loop that will loop 
+        function fqf() {
+        }
+        function checkAnswer(answer){
+            if( answer == 'best'){
+                // answer is correct
+                // change progress color to green
+                answerIsCorrect();
+                score+= 0.15;
+                // var fq = scorePerCent + "%";
+                // document.getElementById("fq").value = test;
+            }
+            else if( answer == 'good'){
+                // answer is correct
+                // change progress color to green
+                score += 0.3;
+                answerIsCorrect();
+            }
+            else if( answer == 'medium'){
+                // answer is correct
+                score+= 0.5;
+                // change progress color to green
+                answerIsCorrect();
+            }
+            else if( answer == 'bad'){
+                score+= 0.75;
+                // answer is correct
+                // change progress color to green
+                answerIsCorrect();
+            }
+            else{
+                score+= 0.9;
+                // answer is wrong
+                // change progress color to red
+                answerIsCorrect();
+            }
+            count = 0;
+            if(runningQuestion < lastQuestion){
+                runningQuestion++;
+                renderQuestion();
+            }
+            else if (runningQuestion == lastQuestion){
+                btn.style.display = 'block';
+                scoreRender();
+            }
+            else{
+                // end the quiz and show the score
+                clearInterval(TIMER);
+            }
+
+        }
+
+
+
+
+
+        b
+        // answer is correct
+        function answerIsCorrect(){
+            document.getElementById(runningQuestion).style.backgroundColor = "black";
+        }
+
+
+
+
+
+
+        // score render
+        function scoreRender(){
+            
+            scoreDiv.style.display = "block";
+            
+            // calculate the amount of question percent answered by the user
+            const scorePerCent = Math.round(100 * score/questions.length);
+            
+            // choose the image based on the scorePerCent
+            let img = (scorePerCent >= 80) ? "img/5.png" :
+                    (scorePerCent >= 60) ? "img/4.png" :
+                    (scorePerCent >= 40) ? "img/3.png" :
+                    (scorePerCent >= 20) ? "img/2.png" :
+                    "img/1.png";
+            
+            //scoreDiv.innerHTML = "<img src="+ img +">";
+
+
+
+
+
+            if(scorePerCent < 30){
+                    modalC.innerHTML += "<h2> "+ scorePerCent + "% spread impact</h2><hr/><p>Very low chance of contracting COVID-19 through spread. Your record is sent to ncdc successfully</p>";
+                    var test = scorePerCent + "%";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+            }
+            else if (scorePerCent < 50){
+                    modalC.innerHTML += "<h2> "+ scorePerCent + "% spread impact</h2><hr/><p>Low chance of contracting COVID-19 through spread. Your record is sent to ncdc successfully</p>";
+                    var test = scorePerCent + "%";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+                    
+            }
+            else if (scorePerCent < 70){
+                    modalC.innerHTML += "<h2> "+ scorePerCent + "% spread impact</h2><hr/><p>High chance of contracting COVID-19 through spread. Your record is sent to ncdc successfully</p>";
+                    var test = scorePerCent + "%";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+            }
+            else { 
+                    modalC.innerHTML += "<h2> "+ scorePerCent + "% spread impact</h2><hr/><p>Very high chance of contracting COVID-19 through spread. Your record is sent to ncdc successfully</p>";
+                    var test = scorePerCent + "%";
+                    document.getElementById("mytext").value = test;//Now you get the js variable inside your form element
+            }
+        }
+</script>
+</body>
+</html>
